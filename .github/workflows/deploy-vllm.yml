@@ -33,7 +33,7 @@ jobs:
       # 3. KORREKSI FINAL: Hanya mengirim file docker-compose.yml ke target folder monorepo di VM GCE
       - name: Sync vLLM Config via gcloud SCP
         run: |
-          gcloud compute scp vllm-gce/docker-compose.yml ${{ vars.GCE_VM_NAME }}:~/llm-serving-monitoring/vllm/ \
+          gcloud compute scp vllm-gce/docker-compose.yml ${{ vars.GCE_VM_NAME }}:~/opt/llm-serving-monitoring/vllm/ \
             --zone=${{ vars.GCE_VM_ZONE }} \
             --tunnel-through-iap \
             --quiet
