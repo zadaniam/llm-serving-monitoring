@@ -32,13 +32,13 @@ jobs:
       # 3. Kirim folder monitoring ke VM GCE lewat IAP Tunnel
       - name: Copy Monitoring Files via gcloud SCP
         run: |
-          gcloud compute scp --recurse monitoring/ ${{ vars.GCE_VM_NAME }}:~/app/ --zone=${{ vars.GCE_VM_ZONE }} --tunnel-through-iap
+          gcloud compute scp --recurse monitoring/ ${{ vars.GCE_VM_NAME }}:~/llm-serving-monitoring/ --zone=${{ vars.GCE_VM_ZONE }} --tunnel-through-iap
 
       # 4. Eksekusi SSH otomatis untuk menjalankan docker compose monitoring
       - name: Restart Monitoring via gcloud SSH
         run: |
           gcloud compute ssh ${{ vars.GCE_VM_NAME }} --zone=${{ vars.GCE_VM_ZONE }} --tunnel-through-iap --command="
-            cd ~/app/monitoring
+            cd ~/llm-serving-monitoring/monitoring
             docker network create shared-monitor-network || true
             docker compose up -d --remove-orphans
           "
