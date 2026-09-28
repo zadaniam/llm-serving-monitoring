@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'monitoring/**' # Hanya jalan jika ada perubahan di folder monitoring
+      - '.github/workflows/deploy-monitoring.yml'
 
 permissions:
   contents: read
