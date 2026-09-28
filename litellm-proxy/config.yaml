@@ -1,0 +1,71 @@
+model_list:
+  # ==========================================
+  # LAPISAN 1 (UTAMA): vLLM Self-Hosted
+  # ==========================================
+  - model_name: my-smart-router
+    litellm_params:
+      model: openai/qwen-2.5-14b-awq
+      api_key:  os.environ/VLLM_API_KEY          
+      api_base: os.environ/VLLM_API_BASE
+      rpm: 1000
+      max_parallel_requests: 10 # Indikator Overload 1 (Concurrency Guard)
+      timeout: 5                # Indikator Overload 2 (Latency Cap)
+      order: 1                 
+    model_info:
+      id: "vllm-local-primary"
+
+  # ==========================================
+  # LAPISAN 2 (CLOUD BACKUP CLUSTER)
+  # ==========================================
+  - model_name: my-smart-router
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+      rpm: 1000
+      order: 2                  # Berbagi beban pintar via usage-based jika order 1 penuh
+    model_info:
+      id: "groq-cloud-backup-1"
+
+  - model_name: my-smart-router
+    litellm_params:
+      model: gemini/gemini-3.5-flash-lite
+      api_key: os.environ/GEMINI_KEY_3_5
+      rpm: 15
+      tpm: 1000000
+      order: 2                  
+    model_info:
+      id: "gemini-3.5-cloud-backup-2" 
+
+  - model_name: my-smart-router
+    litellm_params:
+      model: gemini/gemini-2.5-flash-lite
+      api_key: os.environ/GEMINI_KEY_2_5
+      rpm: 15
+      tpm: 1000000
+      order: 2                 
+    model_info:
+      id: "gemini-2.5-cloud-backup-2" 
+
+# ==========================================
+# STRATEGI PINTAR GLOBAL
+# ==========================================
+router_settings:
+  routing_strategy: usage-based-routing-v2 
+  redis_url: os.environ/REDIS_URL
+  cooldown_time: 45 
+  num_retries: 1    
+  allowed_fails: 1 
+  enable_pre_call_checks: true
+  optional_pre_call_checks:
+    - enforce_model_rate_limits
+
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  hide_errors: true 
+
+    # --- INDIKATOR OVERLOAD 3 (Proactive Background Monitoring) ---
+  background_health_checks: true     # Pekerja latar belakang
+  enable_health_check_routing: true  # Mengalihkan traffic jika tidak sehat
+  health_check_interval: 15          # Cek kesehatan vLLM setiap 15 detik sekali
+  health_check_timeout: 1.0          # Batas toleransi respons ping

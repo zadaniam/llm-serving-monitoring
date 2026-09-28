@@ -1,0 +1,45 @@
+name: Deploy Monitoring Stack to GCE
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'monitoring/**' # Hanya jalan jika ada perubahan di folder monitoring
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-monitoring:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 1. Autentikasi menggunakan WIF resmi ke GCP
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/352692367446/locations/global/workloadIdentityPools/github-pool-v2/providers/github-provider-v2'
+          service_account: 'vllm-deployer@project-0cb13828-a08a-466a-934.iam.gserviceaccount.com'
+
+      # 2. Setup Google Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # 3. Kirim folder monitoring ke VM GCE lewat IAP Tunnel
+      - name: Copy Monitoring Files via gcloud SCP
+        run: |
+          gcloud compute scp --recurse monitoring/ ${{ vars.GCE_VM_NAME }}:~/app/ --zone=${{ vars.GCE_VM_ZONE }} --tunnel-through-iap
+
+      # 4. Eksekusi SSH otomatis untuk menjalankan docker compose monitoring
+      - name: Restart Monitoring via gcloud SSH
+        run: |
+          gcloud compute ssh ${{ vars.GCE_VM_NAME }} --zone=${{ vars.GCE_VM_ZONE }} --tunnel-through-iap --command="
+            cd ~/app/monitoring
+            docker network create shared-monitor-network || true
+            docker compose up -d --remove-orphans
+          "
+

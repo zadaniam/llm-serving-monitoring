@@ -1,0 +1,6 @@
+[project]
+name = "load-testing-service"
+version = "0.1.0"
+dependencies = [
+    "locust~=2.46.6", 
+]

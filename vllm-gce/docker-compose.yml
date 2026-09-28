@@ -1,0 +1,45 @@
+services:
+  vllm:
+    image: vllm/vllm-openai:v0.30.0 # CUDA 13.0
+    container_name: vllm-server
+    restart: unless-stopped
+    
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all # Membaca seluruh GPU L4 yang terpasang di VM
+              capabilities: [gpu]
+
+    ipc: host # Berbagi shared memory dengan host OS agar PyTorch berjalan maksimal tanpa bottleneck
+    
+    ports:
+      - "8000:8000" # Membuka API vLLM agar bisa diakses oleh aplikasi luar / LiteLLM Proxy
+
+    volumes:
+      # Memetakan folder cache Hugging Face ke folder host yang sudah dibuat via setup-gpu.sh
+      - /home/ubuntu/.cache/huggingface:/root/.cache/huggingface
+
+    environment:
+      - HF_TOKEN=${HF_TOKEN}
+      - VLLM_LOGGING_LEVEL=INFO
+
+    command: >
+      --model Qwen/Qwen2.5-14B-Instruct-AWQ
+      --quantization awq
+      --served-model-name ${MODEL_NAME}
+      --gpu-memory-utilization 0.90
+      --max-model-len 2048
+      --max-num-seqs 256
+      --enable-prefix-caching
+      --api-key ${VLLM_API_KEY}
+
+
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
+    external: true
+    name: shared-monitor-network

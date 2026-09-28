@@ -1,0 +1,29 @@
+services:
+  prometheus:
+    image: prom/prometheus:v3.15.0
+    container_name: prometheus
+    volumes:
+      # UBAH BAGIAN INI: Menunjuk langsung ke file di folder yang sama
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - shared-network
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:13.2.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - shared-network
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  grafana-storage:
+
+networks:
+  shared-network:
+    external: true
+    name: shared-monitor-network

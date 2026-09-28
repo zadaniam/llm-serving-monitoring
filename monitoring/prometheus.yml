@@ -1,0 +1,11 @@
+global:
+  scrape_interval: 15s     # Seberapa sering Prometheus menarik data (default 15s)
+  evaluation_interval: 15s # Seberapa sering Prometheus mengevaluasi aturan alert
+
+scrape_configs:
+  - job_name: 'vllm-metrics'
+    metrics_path: '/metrics'
+    static_configs:
+      # Karena kita menggunakan Docker Shared Network bernama 'shared-monitor-network',
+      # Prometheus bisa langsung memanggil nama container vLLM-nya ('vllm-server')
+      - targets: ['vllm-server:8000']

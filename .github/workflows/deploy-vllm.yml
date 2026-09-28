@@ -1,0 +1,39 @@
+name: Sync vLLM Config to GCE
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'vllm-gce/**'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  sync-vllm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 1. Autentikasi menggunakan WIF resmi ke GCP
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/352692367446/locations/global/workloadIdentityPools/github-pool-v2/providers/github-provider-v2'
+          service_account: 'vllm-deployer@project-0cb13828-a08a-466a-934.iam.gserviceaccount.com'
+
+      # 2. Setup Google Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # 3. KORREKSI FINAL: Hanya mengirim file docker-compose.yml ke target folder monorepo di VM GCE
+      - name: Sync vLLM Config via gcloud SCP
+        run: |
+          gcloud compute scp vllm/docker-compose.yml ${{ vars.GCE_VM_NAME }}:~/my-monorepo/vllm/ \
+            --zone=${{ vars.GCE_VM_ZONE }} \
+            --tunnel-through-iap \
+            --quiet
+

@@ -1,0 +1,47 @@
+name: Deploy LiteLLM to Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'litellm-proxy/**'
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  CLOUD_RUN_SERVICE: litellm-proxy
+  REGION: us-central1
+
+jobs:
+  deploy-litellm:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Auth to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Configure Docker for Artifact Registry
+      run: gcloud auth configure-docker $REGION-docker.pkg.dev --quiet
+
+    - name: Build and Push LiteLLM Custom Image
+      run: |
+        IMAGE_URI="$REGION-docker.pkg.dev/$PROJECT_ID/llm-infra/litellm-proxy:latest"
+        docker build -t $IMAGE_URI -f litellm/Dockerfile.litellm litellm/
+        docker push $IMAGE_URI
+
+    - name: Deploy to Cloud Run
+      run: |
+        IMAGE_URI="$REGION-docker.pkg.dev/$PROJECT_ID/llm-infra/litellm-proxy:latest"
+        gcloud run deploy $CLOUD_RUN_SERVICE \
+          --image=$IMAGE_URI \
+          --region=$REGION \
+          --platform=managed \
+          --allow-unauthenticated \
+          --port=4000 \
+          --set-env-vars="VLLM_API_BASE=${{ secrets.VLLM_API_BASE }},VLLM_API_KEY=${{ secrets.VLLM_API_KEY }},GROQ_API_KEY=${{ secrets.GROQ_API_KEY }},GEMINI_KEY_3_5=${{ secrets.GEMINI_KEY_3_5 }},GEMINI_KEY_2_5=${{ secrets.GEMINI_KEY_2_5 }},LITELLM_MASTER_KEY=${{ secrets.LITELLM_MASTER_KEY }},REDIS_URL=${{ secrets.REDIS_URL }}"
