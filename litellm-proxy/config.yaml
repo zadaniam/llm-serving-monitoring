@@ -52,7 +52,7 @@ model_list:
 # STRATEGI PINTAR GLOBAL
 # ==========================================
 router_settings:
-  routing_strategy: priority-based-routing
+  routing_strategy: simple shuffle
   # redis_url: os.environ/REDIS_URL
   cooldown_time: 45 
   num_retries: 1    
