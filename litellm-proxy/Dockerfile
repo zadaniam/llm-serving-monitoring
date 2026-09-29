@@ -30,4 +30,4 @@ EXPOSE 8080
 ENTRYPOINT []
 
 # Jalankan LiteLLM Proxy bawaan dengan port dinamis dari Cloud Run
-CMD [litellm --config config.yaml --host 0.0.0.0 --port ${PORT:-4000}]
+CMD litellm --config config.yaml --host 0.0.0.0 --port ${PORT:-4000}
