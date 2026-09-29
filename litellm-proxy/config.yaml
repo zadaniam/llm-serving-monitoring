@@ -61,13 +61,6 @@ router_settings:
   optional_pre_call_checks:
     - enforce_model_rate_limits
 
-
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
   hide_errors: true 
-
-    # --- INDIKATOR OVERLOAD 3 (Proactive Background Monitoring) ---
-  background_health_checks: true     # Pekerja latar belakang
-  enable_health_check_routing: true  # Mengalihkan traffic jika tidak sehat
-  health_check_interval: 15          # Cek kesehatan vLLM setiap 15 detik sekali
-  health_check_timeout: 10.0         # Batas toleransi respons ping
