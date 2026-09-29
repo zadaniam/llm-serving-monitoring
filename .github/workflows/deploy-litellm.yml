@@ -47,7 +47,7 @@ jobs:
       id: deploy-litellm
       uses: google-github-actions/deploy-cloudrun@v2
       with:
-        service: legal-rag-litellm
+        service: litellm-vllm
         region: ${{ vars.REGION }}
         image: ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.GAR_REPO }}/litellm:${{ github.sha }}
         flags: '--allow-unauthenticated'
