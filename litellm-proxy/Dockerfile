@@ -26,5 +26,8 @@ COPY config.yaml .
 # Cloud Run mendengarkan port secara dinamis
 EXPOSE 8080
 
+# 1. Reset ENTRYPOINT bawaan agar tidak mengganggu perintah CMD
+ENTRYPOINT []
+
 # Jalankan LiteLLM Proxy bawaan dengan port dinamis dari Cloud Run
-CMD ["/bin/sh", "-c", "litellm --config config.yaml --host 0.0.0.0 --port ${PORT:-4000}"]
+CMD [litellm --config config.yaml --host 0.0.0.0 --port ${PORT:-4000}]
