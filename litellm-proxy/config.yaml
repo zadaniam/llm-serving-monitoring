@@ -10,7 +10,7 @@ model_list:
       rpm: 1000
       tpm: 1000000
       max_parallel_requests: 10 # Indikator Overload 1 (Concurrency Guard)
-      timeout: 5                # Indikator Overload 2 (Latency Cap)
+      timeout: 30                # Indikator Overload 2 (Latency Cap)
       order: 1                 
     model_info:
       id: "vllm-local-primary"
@@ -70,4 +70,4 @@ general_settings:
   background_health_checks: true     # Pekerja latar belakang
   enable_health_check_routing: true  # Mengalihkan traffic jika tidak sehat
   health_check_interval: 15          # Cek kesehatan vLLM setiap 15 detik sekali
-  health_check_timeout: 1.0          # Batas toleransi respons ping
+  health_check_timeout: 10.0         # Batas toleransi respons ping
