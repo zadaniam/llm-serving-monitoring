@@ -54,9 +54,8 @@ jobs:
         env_vars: |
           LITELLM_MODE=production
         secrets: |
-          REDIS_URL=LITELLM_REDIS_URL:latest
-          VLLM_API_KEY=LITELLM_VLLM_API_KEY:latest
-          GROQ_API_KEY=LITELLM_GROQ_API_KEY:latest
-          GEMINI_KEY_3_5=LITELLM_GEMINI_KEY_3_5:latest
-          GEMINI_KEY_2_5=LITELLM_GEMINI_KEY_2_5:latest
+          VLLM_API_KEY=VLLM_API_KEY:latest
+          GROQ_API_KEY=GROQ_API_KEY:latest
+          GEMINI_KEY_3_5=GEMINI_API_KEY_3_5:latest
+          GEMINI_KEY_2_5=GEMINI_API_KEY_2_5:latest
           LITELLM_MASTER_KEY=LITELLM_MASTER_KEY:latest
