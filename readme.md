@@ -7,7 +7,12 @@ LiteLLM
 Fitur utama:
 ------------
 
-Deployment dengan gcp auth WIF (OIDC) untuk security
+Security:
+
+Isolated network with Direct VPC Egress to close the public IP
+
+Deployment dengan gcp auth WIF (OIDC)
+
 
 hybrid-llm-router/ (Root Monorepo)
 ├── .github/workflows/         # Opsional: CI/CD automation script
