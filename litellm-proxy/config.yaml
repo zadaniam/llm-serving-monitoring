@@ -52,8 +52,8 @@ model_list:
 # STRATEGI PINTAR GLOBAL
 # ==========================================
 router_settings:
-  routing_strategy: usage-based-routing-v2 
-  redis_url: os.environ/REDIS_URL
+  routing_strategy: priority-based-routing
+  # redis_url: os.environ/REDIS_URL
   cooldown_time: 45 
   num_retries: 1    
   allowed_fails: 1 
