@@ -40,7 +40,7 @@ jobs:
         run: |
           gcloud compute ssh ${{ vars.GCE_VM_NAME }} --zone=${{ vars.GCE_VM_ZONE }} --tunnel-through-iap --command="
             cd /opt/llm-serving-monitoring/monitoring
-            docker network create shared-monitor-network || true
-            docker compose up -d --remove-orphans
+            sudo docker network create shared-monitor-network || true
+            sudo docker-compose up -d --remove-orphans
           "
 
