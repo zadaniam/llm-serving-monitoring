@@ -32,10 +32,10 @@ gcloud compute ssh "$VM_NAME" \
     echo \"MODEL_NAME=$MODEL_NAME\" >> .env
 
     echo '>>> 3. Validasi Docker Network Kustom...'
-    docker network inspect shared-monitor-network >/dev/null 2>&1 || docker network create shared-monitor-network
+    sudo docker network inspect shared-monitor-network >/dev/null 2>&1 || sudo docker network create shared-monitor-network
 
     echo '>>> 4. Menjalankan Docker Compose (vLLM Engine)...'
-    docker compose up -d --remove-orphans
+    sudo docker-compose up -d --remove-orphans
 "
 
 echo "=========================================================="

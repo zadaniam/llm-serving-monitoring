@@ -26,7 +26,7 @@ services:
       - VLLM_LOGGING_LEVEL=INFO
 
     command: >
-      --model Qwen/Qwen2.5-14B-Instruct-AWQ
+      Qwen/Qwen2.5-14B-Instruct-AWQ
       --quantization awq
       --served-model-name ${MODEL_NAME}
       --gpu-memory-utilization 0.90
