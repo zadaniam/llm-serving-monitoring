@@ -30,7 +30,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      # 3. KORREKSI FINAL: Hanya mengirim file docker-compose.yml ke target folder monorepo di VM GCE
+      # 3. Hanya mengirim file docker-compose.yml ke target folder monorepo di VM GCE
       - name: Sync vLLM Config via gcloud SCP
         run: |
           gcloud compute scp vllm-gce/docker-compose.yml ${{ vars.GCE_VM_NAME }}:/opt/llm-serving-monitoring/vllm/ \

@@ -25,10 +25,21 @@ sudo apt-get update -y
 sudo apt-get install -y nvidia-container-toolkit
 sudo nvidia-container-toolkit runtime configure --runtime=docker
 
-echo ">>> 4. Finalisasi Konfigurasi & Hak Akses"
+echo ">>> 4. Menyiapkan Folder Aplikasi & Hak Akses CI/CD (KOREKSI BARU)"
+# Membuat struktur folder deployment di direktori /opt
+sudo mkdir -p /opt/llm-serving-monitoring/vllm
+sudo mkdir -p /opt/llm-serving-monitoring/monitoring
+
+# Mengubah hak kepemilikan folder ke user saat ini agar gcloud SCP tidak permission denied
+sudo chown -R $USER:$USER /opt/llm-serving-monitoring
+
 # Membuat folder cache huggingface agar tidak error saat volume mount
 sudo mkdir -p /home/ubuntu/.cache/huggingface
 sudo chmod -R 777 /home/ubuntu/.cache/huggingface
+
+echo ">>> 5. Finalisasi Konfigurasi & Akses Docker Tanpa Sudo"
+# Memasukkan user aktif ke grup docker agar tidak perlu mengetik 'sudo docker' terus
+sudo usermod -aG docker $USER
 
 # Restart Docker untuk menerapkan semua perubahan GPU runtime
 sudo systemctl restart docker
