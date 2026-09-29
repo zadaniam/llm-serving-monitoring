@@ -50,7 +50,7 @@ jobs:
         service: litellm-vllm
         region: ${{ vars.REGION }}
         image: ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.GAR_REPO }}/litellm:${{ github.sha }}
-        flags: '--allow-unauthenticated --network=default --subnet=default --egress=private-ranges-only'
+        flags: '--allow-unauthenticated --network=default --subnet=default --vpc-egress=private-ranges-only'
         env_vars: |
           LITELLM_MODE=production
           VLLM_API_BASE=${{ vars.VLLM_API_BASE }}
