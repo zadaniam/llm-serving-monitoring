@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM ghcr.io/berriai/litellm:v1.103.0
 
 WORKDIR /app
 
@@ -16,4 +16,4 @@ EXPOSE 8000
 
 # Jalankan LiteLLM Proxy menggunakan paket yang sudah diinstal
 # Jika $PORT kosong (misal saat dijalankan lokal), ia akan otomatis menggunakan port 4000.
-CMD litellm --config config.yaml --host 0.0.0.0 --port ${PORT:-4000}
+CMD ["/bin/sh", "-c", "litellm --config config.yaml --host 0.0.0.0 --port ${PORT:-4000}"]

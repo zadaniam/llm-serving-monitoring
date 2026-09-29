@@ -8,6 +8,7 @@ model_list:
       api_key:  os.environ/VLLM_API_KEY          
       api_base: os.environ/VLLM_API_BASE
       rpm: 1000
+      tpm: 1000000
       max_parallel_requests: 10 # Indikator Overload 1 (Concurrency Guard)
       timeout: 5                # Indikator Overload 2 (Latency Cap)
       order: 1                 
@@ -22,6 +23,7 @@ model_list:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY
       rpm: 1000
+      tpm: 100000
       order: 2                  # Berbagi beban pintar via usage-based jika order 1 penuh
     model_info:
       id: "groq-cloud-backup-1"
@@ -51,7 +53,7 @@ model_list:
 # ==========================================
 router_settings:
   routing_strategy: usage-based-routing-v2 
-  redis_url: os.environ/REDIS_URL
+  # redis_url: os.environ/REDIS_URL
   cooldown_time: 45 
   num_retries: 1    
   allowed_fails: 1 
