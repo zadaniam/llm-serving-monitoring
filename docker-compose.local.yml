@@ -1,10 +1,5 @@
 services:
   # 1. DATABASE SINKRONISASI PINTAR (REDIS)
-  redis-local:
-    image: redis:alpine
-    container_name: redis-local
-    ports:
-      - "6379:6379"
 
   # 2. GATEWAY ROUTER (LITELLM PROXY) - MODE LOKAL DEV
   litellm-proxy-dev:
@@ -22,8 +17,6 @@ services:
       - GEMINI_KEY_3_5=${GEMINI_KEY_3_5}
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
     command: [ "--config", "/app/config.yaml", "--port", "4000" ]
-    depends_on:
-      - redis-local
 
   # 3. INFRASTRUKTUR TELEMETRI (PROMETHEUS)
   prometheus:

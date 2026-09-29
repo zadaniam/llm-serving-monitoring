@@ -57,9 +57,9 @@ router_settings:
   cooldown_time: 45 
   num_retries: 1    
   allowed_fails: 1 
-  enable_pre_call_checks: true
-  optional_pre_call_checks:
-    - enforce_model_rate_limits
+  # enable_pre_call_checks: true
+  # optional_pre_call_checks:
+  #  - enforce_model_rate_limits
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
