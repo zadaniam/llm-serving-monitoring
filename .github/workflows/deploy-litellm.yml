@@ -53,6 +53,7 @@ jobs:
         flags: '--allow-unauthenticated'
         env_vars: |
           LITELLM_MODE=production
+          VLLM_API_BASE=${{ vars.VLLM_API_BASE }}
         secrets: |
           VLLM_API_KEY=VLLM_API_KEY:latest
           GROQ_API_KEY=GROQ_API_KEY:latest
