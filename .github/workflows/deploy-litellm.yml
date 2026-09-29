@@ -59,4 +59,5 @@ jobs:
           GROQ_API_KEY=GROQ_API_KEY:latest
           GEMINI_KEY_3_5=GEMINI_API_KEY_3_5:latest
           GEMINI_KEY_2_5=GEMINI_API_KEY_2_5:latest
+          REDIS_URL=REDIS_URL:latest
           LITELLM_MASTER_KEY=LITELLM_MASTER_KEY:latest
