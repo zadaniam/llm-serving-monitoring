@@ -5,8 +5,8 @@ WORKDIR /app
 # Salin file definisi dependensi terlebih dahulu (memanfaatkan Docker Layer Caching)
 COPY pyproject.toml .
 
-# Install dependensi langsung di dalam kontainer
-RUN pip install --no-cache-dir .
+# Install dependensi pakai python internal absolut milik LiteLLM
+RUN /usr/local/bin/python3 -m pip install --no-cache-dir .
 
 # Salin file konfigurasi utama LiteLLM
 COPY config.yaml .
