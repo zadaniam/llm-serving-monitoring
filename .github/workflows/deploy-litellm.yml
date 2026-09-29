@@ -38,7 +38,8 @@ jobs:
     - name: Build and Push LiteLLM Image
       uses: docker/build-push-action@v6
       with:
-        context: .
+        context: ./litellm-proxy
+        file: ./litellm-proxy/Dockerfile
         push: true
         tags: ${{ vars.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID_STRING }}/${{ vars.GAR_REPO }}/litellm:${{ github.sha }}
 
