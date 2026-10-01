@@ -10,7 +10,7 @@ model_list:
       rpm: 1000
       tpm: 1000000
       max_parallel_requests: 10 # Indikator Overload 1 (Concurrency Guard)
-      timeout: 30                # Indikator Overload 2 (Latency Cap)
+      timeout: 3                # Indikator Overload 2 (Latency Cap)
       order: 1                 
     model_info:
       id: "vllm-local-primary"
@@ -24,6 +24,7 @@ model_list:
       api_key: os.environ/GROQ_API_KEY
       rpm: 1000
       tpm: 100000
+      timeout: 5  
       order: 2                  # Berbagi beban pintar via usage-based jika order 1 penuh
     model_info:
       id: "groq-cloud-backup-1"
@@ -34,6 +35,7 @@ model_list:
       api_key: os.environ/GEMINI_KEY_3_5
       rpm: 15
       tpm: 1000000
+      timeout: 5
       order: 2                  
     model_info:
       id: "gemini-3.5-cloud-backup-2" 
@@ -44,6 +46,7 @@ model_list:
       api_key: os.environ/GEMINI_KEY_2_5
       rpm: 15
       tpm: 1000000
+      timeout: 5
       order: 2                 
     model_info:
       id: "gemini-2.5-cloud-backup-2" 
@@ -55,7 +58,7 @@ router_settings:
   routing_strategy: simple-shuffle
   redis_url: os.environ/REDIS_URL
   cooldown_time: 45 
-  num_retries: 1    
+  num_retries: 0    
   allowed_fails: 1 
   enable_pre_call_checks: true
   optional_pre_call_checks:
