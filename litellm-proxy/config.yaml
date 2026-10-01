@@ -20,7 +20,7 @@ model_list:
   # ==========================================
   - model_name: my-smart-router
     litellm_params:
-      model: groq/llama-3.3-70b-versatile
+      model: groq/openai/gpt-oss-20b
       api_key: os.environ/GROQ_API_KEY
       rpm: 1000
       tpm: 100000
@@ -56,7 +56,7 @@ model_list:
 # ==========================================
 router_settings:
   routing_strategy: simple-shuffle
-  redis_url: os.environ.get("REDIS_URL")
+  redis_url: os.environ/REDIS_URL
   cooldown_time: 45 
   num_retries: 0    
   allowed_fails: 1 
@@ -65,5 +65,5 @@ router_settings:
     - enforce_model_rate_limits
 
 general_settings:
-  master_key: os.environ.get("LITELLM_MASTER_KEY")
+  master_key: os.environ/LITELLM_MASTER_KEY
   hide_errors: true 
