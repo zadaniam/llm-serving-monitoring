@@ -1,0 +1,17 @@
+[project]
+name = "llm-serving-tests"
+version = "0.1.0"
+description = "Integration and Load Testing Suite for LLM Serving"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "locust~=2.46.6",
+    "pytest~=9.1.0",
+    "python-dotenv~=1.2.4",
+    "redis~=8.1.0",
+    "requests~=2.34.2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["integration"]
+python_files = ["test_*.py"]

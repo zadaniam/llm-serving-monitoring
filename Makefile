@@ -48,7 +48,7 @@ dev-logs:
 # 3. SKRIP OTOMATISASI & BOT RUNNER
 run-bot:
 	@echo "🤖 Running Bot Test Script..."
-	uv run --env-file .env tests/load/test_bot.py
+	uv run --env-file .env tests/performance/test_bot.py
 
 # 4. BENCHMARK & TESTING (INTEGRATION & PERFORMANCE)
 test-integration:
