@@ -1,0 +1,62 @@
+# Dokumentasi Konfigurasi Memori LLM Serving
+**Model:** Qwen-2.5-7B AWQ (4-bit Quantized)  
+**Infrastruktur:** 1x NVIDIA L4 GPU (24 GB VRAM)  
+**Framework:** vLLM / PagedAttention Engine
+
+---
+
+## 1. Latar Belakang dan Masalah Utama
+
+Dalam *deployment* Large Language Model (LLM) menggunakan framework modern seperti vLLM, manajemen memori bersifat dinamis. Memori VRAM GPU akan dibagi menjadi dua bagian utama:
+1. **Memori Statis:** Untuk memuat bobot (*weights*) model.
+2. **Memori Dinamis (KV Cache):** Ruang sisa yang digunakan untuk menyimpan konteks interaksi (Key-Value) selama proses inferensi berlangsung.
+
+Masalah **Out of Memory (OOM)** atau server *crash* di tengah jalan sering kali terjadi bukan karena kegagalan *hardware*, melainkan akibat ketidakselarasan konfigurasi antara **`max_model_len`** (panjang konteks per user) dan **`max_num_seqs`** (jumlah maksimum *request* bersamaan dalam satu *batch*). Oleh karena itu, penentuan kedua parameter ini harus didasarkan pada kalkulasi matematis kapasitas fisik KV Cache pada GPU.
+
+---
+
+
+
+
+
+
+
+
+
+## LAMPIRAN: Detail Perhitungan max_num_seqs
+
+Akurasi estimasi batas aman *concurrency* dihitung melalui tiga tahapan kapasitas berikut:
+
+### Langkah A: Estimasi Sisa VRAM untuk KV Cache
+* **Total Kapasitas GPU L4:** 24 GB
+* **Alokasi Batas Aman vLLM (`gpu_memory_utilization = 0.90`):** 21,6 GB
+* **Alokasi Bobot Model (Qwen-2.5-7B AWQ):** ± 5,5 GB
+* **Overhead Sistem & CUDA Runtime:** ± 1,5 GB
+
+\[\text{VRAM untuk KV Cache} = 21,6\text{ GB} - 5,5\text{ GB} - 1,5\text{ GB} = \mathbf{14,6\text{ GB}} \ (\approx 14,6 \times 10^9\text{ Bytes})\]
+
+### Langkah B: Konsumsi Memori KV Cache per Token
+Meskipun bobot model menggunakan kuantisasi 4-bit, vLLM secara default tetap menyimpan data KV Cache dalam presisi FP16/BF16 (2 Bytes per elemen) untuk menjaga kualitas output. Berdasarkan arsitektur internal Qwen-2.5-7B:
+* **Jumlah Layer (`num_hidden_layers`):** 28
+* **Jumlah KV Heads (`num_key_value_heads`):** 4 *(Menggunakan Grouped-Query Attention/GQA)*
+* **Dimensi Head (`head_dim`):** 128
+
+\[\text{Bytes per Token} = 2 \times 2 \times \text{Layer} \times \text{KV Heads} \times \text{Dimensi Head}\]
+\[\text{Bytes per Token} = 2 \times 2 \times 28 \times 4 \times 128 = \mathbf{57.344\text{ Bytes}} \ (\approx 57,3\text{ KB/token})\]
+
+### Langkah C: Total Kapasitas Token Maksimal
+Membagi sisa memori dengan konsumsi per token menghasilkan daya tampung absolut dari GPU L4:
+\[\text{Total Kapasitas Token} = \frac{14.600.000.000\text{ Bytes}}{57.344\text{ Bytes}} \approx \mathbf{254.600\text{ Token}}\]
+
+---
+
+## Langkah D: Perhitungan Nilai max_num_seqs Maksimal
+
+Agar server **terjamin bebas dari risiko OOM** pada kondisi beban puncak (*peak traffic*), kombinasi konfigurasi wajib mematuhi batasan hukum formal berikut:
+
+\[\text{max\_num\_seqs} \times \text{max\_model\_len} \le \text{Total Kapasitas Token (254.600)}\]
+
+Berdasarkan kebutuhan aplikasi yang dikhususkan untuk **basis chatbot pendek**, konfigurasi resmi yang diterapkan adalah:
+
+* **`max_model_len`:** **512 Token** (Batasan ketat untuk input prompt + output jawaban pendek).
+* **Batas Aman `max_num_seqs`:** **497 *Requests*** (Hasil pembagian: 254.600 / 512).
