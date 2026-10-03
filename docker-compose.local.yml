@@ -1,24 +1,21 @@
 services:
-  # 1. DATABASE SINKRONISASI PINTAR (REDIS)
-
-  # 2. GATEWAY ROUTER (LITELLM PROXY) - MODE LOKAL DEV
+  # 1. GATEWAY ROUTER (LITELLM PROXY)
   litellm-proxy-dev:
-    image: ghcr.io/berriai/litellm:1.101.0
+    image: litellm-proxy-local:latest
     container_name: litellm-proxy-dev
     ports:
       - "4000:4000"
     volumes:
       - ./litellm-proxy/config.yaml:/app/config.yaml
-    # --- KUNCINYA DI SINI ---
     environment:
       - REDIS_URL=${REDIS_URL}
       - VLLM_API_BASE=${VLLM_API_BASE}
       - GROQ_API_KEY=${GROQ_API_KEY}
       - GEMINI_KEY_3_5=${GEMINI_KEY_3_5}
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
-    command: [ "--config", "/app/config.yaml", "--port", "4000" ]
+    command: litellm --config /app/config.yaml --port 4000
 
-  # 3. INFRASTRUKTUR TELEMETRI (PROMETHEUS)
+  # 2. INFRASTRUKTUR TELEMETRI (PROMETHEUS)
   prometheus:
     image: prom/prometheus:v3.15.0
     container_name: prometheus-local
@@ -29,7 +26,7 @@ services:
     depends_on:
       - litellm-proxy-dev
 
-  # 4. VISUALISASI METRIK (GRAFANA)
+  # 3. VISUALISASI METRIK (GRAFANA)
   grafana:
     image: grafana/grafana:13.2.2
     container_name: grafana-local

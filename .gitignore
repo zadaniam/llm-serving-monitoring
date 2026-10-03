@@ -1,4 +1,20 @@
+# Mengabaikan semua virtual environment Python di folder mana pun
+.venv/
+venv/
+ENV/
+env/
+
+# Mengabaikan berkas cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Mengabaikan berkas rahasia
 .env
+*.env.local
 .env.prod
-/.env
-.cache/
+
+# Mengabaikan log sistem
+*.log
