@@ -3,8 +3,8 @@ services:
     image: prom/prometheus:v3.15.0
     container_name: prometheus
     volumes:
-      # UBAH BAGIAN INI: Menunjuk langsung ke file di folder yang sama
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-storage:/prometheus
     networks:
       - shared-network
     ports:
