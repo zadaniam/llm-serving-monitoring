@@ -22,6 +22,7 @@ services:
 
 volumes:
   grafana-storage:
+  prometheus-storage:
 
 networks:
   shared-network:
