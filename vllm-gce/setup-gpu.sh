@@ -7,7 +7,7 @@ set -e
 
 echo ">>> 1. Menginstal Docker Engine & Tools Utama"
 sudo apt-get update -y
-sudo apt-get install -y curl git docker.io docker-compose
+sudo apt-get install -y curl git docker.io docker-compose-v2
 
 echo ">>> 2. Menginstal Driver Resmi NVIDIA (Versi Stabil Headless)"
 # Memasang driver server resmi dan utility pendukungnya
@@ -46,5 +46,5 @@ sudo systemctl restart docker
 
 echo "========================================================"
 echo " SETUP SELESAI! SILAKAN REBOOT VM ATAU RE-LOGIN SSH Anda."
-echo " Setelah itu, Anda bisa langsung menjalankan Docker Compose."
+echo " Setelah itu, Anda bisa langsung menjalankan Docker Compose (v2)."
 echo "========================================================"

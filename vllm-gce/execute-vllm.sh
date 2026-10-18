@@ -35,7 +35,7 @@ gcloud compute ssh "$VM_NAME" \
     sudo docker network inspect shared-monitor-network >/dev/null 2>&1 || sudo docker network create shared-monitor-network
 
     echo '>>> 4. Menjalankan Docker Compose (vLLM Engine)...'
-    sudo docker-compose up -d --remove-orphans
+    sudo docker compose up -d --remove-orphans
 "
 
 echo "=========================================================="
