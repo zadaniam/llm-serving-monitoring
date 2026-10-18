@@ -66,4 +66,5 @@ router_settings:
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
-  hide_errors: true 
+  hide_errors: true
+  

@@ -13,6 +13,10 @@ Pastikan Anda sudah menyalin file `.env.example` menjadi `.env` dan mengisi selu
 
 ## Still Notes
 
+Main Features:
+- Cloud-Native and Distributed Architecture
+-
+
 LiteLLM
 
 1. Failover/Fallback by Order (Priority)

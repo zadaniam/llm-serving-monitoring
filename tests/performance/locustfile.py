@@ -6,7 +6,8 @@ from locust import HttpUser, task, between
 # Sesuaikan bagian ini atau biarkan membaca otomatis dari file .env Anda
 # ==============================================================================
 MODEL_NAME = os.getenv("MODEL_NAME")
-VLLM_API_KEY = os.getenv("VLLM_API_KEY")
+API_KEY = os.getenv("LITELLM_MASTER_KEY")
+
 
 # Pengaturan Payload LLM
 PROMPT_CONTENT = "Berikan penjelasan singkat dan padat mengenai apa itu arsitektur LLM."
@@ -24,7 +25,7 @@ class VLLMLoadTestUser(HttpUser):
         # Header standar OpenAI API / vLLM
         headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {VLLM_API_KEY}"
+            "Authorization": f"Bearer {API_KEY}"
         }
 
         # Payload request menggunakan variabel dari atas
