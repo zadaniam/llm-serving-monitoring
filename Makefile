@@ -62,7 +62,7 @@ test-load:
 
 # 5. CLEANUP UTILITIES
 clean:
-	@echo "🧹 Membersihkan sisa cache, kontainer, dan .venv lokal..."
-	docker compose -f docker-compose.local.yml down -v --remove-orphans
+	@echo "🧹 Membersihkan sisa cache dan .venv lokal..."
 	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	rm -rf tests/.uv tests/.venv
