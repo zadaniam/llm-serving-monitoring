@@ -1,68 +1,61 @@
+# Binds environment variables from .env file if it exists
 -include .env
 export
 
 .PHONY: help install-dev docker-build dev-up dev-down dev-logs run-bot test-integration test-load clean
 
 help:
-	@echo "======================================================================"
-	@echo "                 🌐 HYBRID LLM GATEWAY COMMAND CENTER                "
-	@echo "======================================================================"
-	@echo "Perintah yang tersedia:"
-	@echo "  make install-dev     - Menginstal dependensi pengujian di folder tests"
-	@echo "  make dev-up          - Mengompilasi Docker image & menyalakan ekosistem dev"
-	@echo "  make dev-down        - Mematikan seluruh ekosistem lokal dev"
-	@echo "  make dev-logs        - Melihat log real-time dari LiteLLM Proxy"
-	@echo "  make run-bot         - Menjalankan skrip uji bot otomatis"
-	@echo "  make test-integration- Menjalankan integration testing dengan Pytest"
-	@echo "  make test-load       - Menjalankan Locust untuk load testing"
-	@echo "  make clean           - Membersihkan cache Python, Docker volume, & .venv"
-	@echo "======================================================================"
-	@echo "⚠️  CATATAN: Pastikan eksternal server Redis & vLLM sudah menyala,"
-	@echo "   serta file .env sudah diisi sebelum menjalankan 'make dev-up'!"
-	@echo "======================================================================"
+	@echo "Available commands:"
+	@echo "  make install-dev     - Install test dependencies in tests folder"
+	@echo "  make dev-up          - Build Docker image & start dev ecosystem"
+	@echo "  make dev-down        - Stop entire local dev ecosystem"
+	@echo "  make dev-logs        - View real-time logs from LiteLLM Proxy"
+	@echo "  make run-bot         - Run automated bot test script"
+	@echo "  make test-integration- Run integration testing with Pytest"
+	@echo "  make test-load       - Run Locust for load testing"
+	@echo "  make clean           - Clean Python cache, Docker volume, & .venv"
 
-
-# 1. MANAJEMEN DEPENDENSI LOKAL (UV)
+# 1. LOCAL DEPENDENCY MANAGEMENT (UV)
 install-dev:
-	@echo "⚙️ Masuk ke sub-folder & menginstal dependensi testing menggunakan UV..."
+	@echo "Entering sub-folder & installing testing dependencies using UV..."
 	cd tests && uv sync
 
 # 2. LOCAL DEVELOPMENT DOCKER (DOCKER COMPOSE)
 docker-build:
-	@echo "📦 Building LiteLLM Docker image locally..."
+	@echo "Building LiteLLM Docker image locally..."
 	docker build -t litellm-proxy-local:latest ./litellm-proxy
 
 dev-up: docker-build
-	@echo "📢 Menyiapkan koneksi ke eksternal Redis & vLLM berdasarkan file .env..."
-	@echo "🚀 Menyalakan lingkungan lokal dev (LiteLLM, Prometheus, Grafana)..."
+	@echo "Setting up external Redis & vLLM connection based on .env file..."
+	@echo "Starting local dev environment (LiteLLM, Prometheus, Grafana)..."
 	docker compose -f docker-compose.local.yml up -d
-	@echo "✅ Sistem menyala! LiteLLM: http://localhost:4000 | Grafana: http://localhost:3000"
+	@echo "System is up! LiteLLM: http://localhost:4000 | Grafana: http://localhost:3000"
 
 dev-down:
-	@echo "🛑 Mematikan lingkungan lokal dev..."
+	@echo "Stopping local dev environment..."
 	docker compose -f docker-compose.local.yml down --remove-orphans
 
 dev-logs:
 	docker compose -f docker-compose.local.yml logs -f litellm-proxy-dev
 
-# 3. SKRIP OTOMATISASI & BOT RUNNER
+# 3. AUTOMATION SCRIPT & BOT RUNNER
 run-bot:
-	@echo "🤖 Running Bot Test Script..."
-	uv run --env-file .env tests/performance/test_bot.py
+	@echo "Running Bot Test Script..."
+	cd tests/performance && uv run --env-file ../../.env test_bot.py
 
 # 4. BENCHMARK & TESTING (INTEGRATION & PERFORMANCE)
 test-integration:
-	@echo "🧪 Run Integration Tests via Pytest..."
-	uv run --env-file .env pytest tests/integration/ -v -s
+	@echo "Run Integration Tests via Pytest..."
+	cd tests/integration && uv run --env-file ../../.env pytest . -v -s
 
 test-load:
-	@echo "🦟 Menjalankan pengujian beban Locust secara lokal..."
-	@echo "🔗 Buka http://localhost:8089 di browser untuk mengatur jumlah user."
+	@echo "Running Locust load testing locally..."
+	@echo "Open http://localhost:8089 in browser to configure user count."
 	cd tests/performance && uv run locust -f locustfile.py
 
 # 5. CLEANUP UTILITIES
 clean:
-	@echo "🧹 Membersihkan sisa cache dan .venv lokal..."
+	@echo "🧹 Cleaning local cache and .venv remnants..."
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	rm -rf tests/.uv tests/.venv

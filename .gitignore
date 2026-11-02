@@ -1,20 +1,24 @@
-# Mengabaikan semua virtual environment Python di folder mana pun
-.venv/
-venv/
-ENV/
-env/
+# Python Virtual Environments
+**/.venv/
+**/venv/
+**/ENV/
+**/env/
 
-# Mengabaikan berkas cache Python
-__pycache__/
+# Python Cache and Testing Artifacts
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
-.pytest_cache/
+**.pytest_cache/
+.coverage
+htmlcov/
 
-# Mengabaikan berkas rahasia
+# Sensitive Environment Variables and Secrets
 .env
-*.env.local
-.env.prod
+*.env*
+!.env.example
+*.pem
+*.key
 
-# Mengabaikan log sistem
+# System Logs and Diagnostics
 *.log

@@ -1,50 +1,53 @@
 #!/bin/bash
+# ==============================================================================
+# Title:        setup-gpu.sh
+# Description:  Automation script to provision GPU drivers and runtime for vLLM.
+# Target OS:    Ubuntu Enterprise Server (Headless VM Architecture).
+# ==============================================================================
 
-# ==============================================================================
-# AUTOMATION SETUP GPU ENGINE FOR vLLM (PORTFOLIO VERSION)
-# ==============================================================================
+# Exit immediately if any command returns a non-zero status
 set -e
 
-echo ">>> 1. Menginstal Docker Engine & Tools Utama"
+echo "--> Installing Docker Engine and core core utilities..."
 sudo apt-get update -y
 sudo apt-get install -y curl git docker.io docker-compose-v2
 
-echo ">>> 2. Menginstal Driver Resmi NVIDIA (Versi Stabil Headless)"
-# Memasang driver server resmi dan utility pendukungnya
+echo "--> Installing official NVIDIA Headless Driver and runtime utilities..."
+# Install official server driver and supporting utilities
 sudo apt-get install -y nvidia-headless-580 nvidia-utils-580
 
-echo ">>> 3. Menginstal NVIDIA Container Toolkit (Agar Docker Bisa Membaca GPU)"
-# Menambahkan repository resmi NVIDIA
+echo "--> Configuring NVIDIA Container Toolkit repository..."
+# Add official NVIDIA repository
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
 curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
   sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
   sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
 
-# Install Toolkit dan hubungkan ke Docker
+echo "--> Installing toolkit components and registering Docker runtime..."
+# Install Toolkit and connect to Docker
 sudo apt-get update -y
 sudo apt-get install -y nvidia-container-toolkit
 sudo nvidia-container-toolkit runtime configure --runtime=docker
 
-echo ">>> 4. Menyiapkan Folder Aplikasi & Hak Akses CI/CD (KOREKSI BARU)"
-# Membuat struktur folder deployment di direktori /opt
+echo "--> Creating workspace directories and aligning permission boundaries..."
+# Create deployment folder structure in /opt directory
 sudo mkdir -p /opt/llm-serving-monitoring/vllm
 sudo mkdir -p /opt/llm-serving-monitoring/monitoring
 
-# Mengubah hak kepemilikan folder ke user saat ini agar gcloud SCP tidak permission denied
+# Change folder ownership to current user so gcloud SCP does not get permission denied
 sudo chown -R $USER:$USER /opt/llm-serving-monitoring
 
-# Membuat folder cache huggingface agar tidak error saat volume mount
+# Create huggingface cache folder to avoid errors during volume mount
 sudo mkdir -p /home/ubuntu/.cache/huggingface
 sudo chmod -R 777 /home/ubuntu/.cache/huggingface
 
-echo ">>> 5. Finalisasi Konfigurasi & Akses Docker Tanpa Sudo"
-# Memasukkan user aktif ke grup docker agar tidak perlu mengetik 'sudo docker' terus
+echo "--> Granting rootless Docker permissions and reloading daemon..."
+# Add current user to docker group so you don't have to type 'sudo docker' repeatedly
 sudo usermod -aG docker $USER
 
-# Restart Docker untuk menerapkan semua perubahan GPU runtime
+# Restart Docker to apply all GPU runtime changes
 sudo systemctl restart docker
 
-echo "========================================================"
-echo " SETUP SELESAI! SILAKAN REBOOT VM ATAU RE-LOGIN SSH Anda."
-echo " Setelah itu, Anda bisa langsung menjalankan Docker Compose (v2)."
-echo "========================================================"
+echo "--> Setup orchestration completed successfully."
+echo "[NOTE] You must reboot the VM instance or re-authenticate the SSH session"
+echo "       for the user group privileges and GPU environment hooks to take effect."

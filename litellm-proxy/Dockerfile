@@ -1,33 +1,22 @@
-# ==============================================================================
-# STAGE 1: Builder (Gunakan Python lengkap untuk compile & download package)
-# ==============================================================================
+# Stage 1: Build dependencies
 FROM python:3.11-slim AS builder
 WORKDIR /build
 
-# Salin manifest dependensi Anda
 COPY pyproject.toml .
-
-# Unduh pustaka redis dan dependensinya ke dalam folder lokal khusus
 RUN pip install --no-cache-dir --target=/build/third_party .
 
-# ==============================================================================
-# STAGE 2: Runtime (Gunakan base image resmi LiteLLM yang aman)
-# ==============================================================================
+# Stage 2: Production runtime
 FROM ghcr.io/berriai/litellm:v1.103.0
-
 WORKDIR /app
 
-# Salin folder dependensi pihak ketiga dari STAGE 1 ke jalur pustaka internal LiteLLM
+# Inject Redis and third-party dependencies into LiteLLM's internal site-packages
 COPY --from=builder /build/third_party /usr/local/lib/python3.11/site-packages/
-
-# Salin file konfigurasi utama LiteLLM Anda
 COPY config.yaml .
 
-# Cloud Run mendengarkan port secara dinamis
+# Cloud Run requires binding to a dynamic port provided via the PORT env variable
 EXPOSE 8080
 
-# 1. Reset ENTRYPOINT bawaan agar tidak mengganggu perintah CMD
+# Clear the base image's default entrypoint to allow execution of the customized CMD
 ENTRYPOINT []
 
-# Jalankan LiteLLM Proxy bawaan dengan port dinamis dari Cloud Run
 CMD litellm --config config.yaml --host 0.0.0.0 --port ${PORT:-4000}
