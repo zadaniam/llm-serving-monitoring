@@ -1,7 +1,5 @@
 model_list:
-  # ==========================================
-  # LAPISAN 1 (UTAMA): vLLM Self-Hosted
-  # ==========================================
+  # Tier 1: Primary Self-Hosted Infrastructure
   - model_name: my-smart-router
     litellm_params:
       model: openai/qwen-2.5-14b-awq
@@ -9,15 +7,13 @@ model_list:
       api_base: os.environ/VLLM_API_BASE
       rpm: 1000
       tpm: 1000000
-      max_parallel_requests: 10 # Indikator Overload 1 (Concurrency Guard)
-      timeout: 3                # Indikator Overload 2 (Latency Cap)
+      max_parallel_requests: 10 # Concurrency guard for local deployment
+      timeout: 3                # Latency cap to trigger early fallback
       order: 1                 
     model_info:
       id: "vllm-local-primary"
 
-  # ==========================================
-  # LAPISAN 2 (CLOUD BACKUP CLUSTER)
-  # ==========================================
+  # Tier 2: Cloud Backup Cluster (Fallback Routes)
   - model_name: my-smart-router
     litellm_params:
       model: groq/openai/gpt-oss-20b
@@ -25,7 +21,7 @@ model_list:
       rpm: 1000
       tpm: 100000
       timeout: 5  
-      order: 2                  # Berbagi beban pintar via usage-based jika order 1 penuh
+      order: 2
     model_info:
       id: "groq-cloud-backup-1"
 
@@ -51,9 +47,6 @@ model_list:
     model_info:
       id: "gemini-2.5-cloud-backup-2" 
 
-# ==========================================
-# STRATEGI PINTAR GLOBAL
-# ==========================================
 router_settings:
   routing_strategy: simple-shuffle
   redis_url: os.environ/REDIS_URL

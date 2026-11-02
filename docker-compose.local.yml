@@ -1,5 +1,4 @@
 services:
-  # 1. GATEWAY ROUTER (LITELLM PROXY)
   litellm-proxy-dev:
     image: litellm-proxy-local:latest
     container_name: litellm-proxy-dev
@@ -15,25 +14,23 @@ services:
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
     command: litellm --config /app/config.yaml --port 4000
 
-  # 2. INFRASTRUKTUR TELEMETRI (PROMETHEUS)
   prometheus:
     image: prom/prometheus:v3.15.0
     container_name: prometheus-local
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - litellm-proxy-dev
 
-  # 3. VISUALISASI METRIK (GRAFANA)
   grafana:
     image: grafana/grafana:13.2.2
     container_name: grafana-local
-    volumes:
-      - grafana-storage:/var/lib/grafana
     ports:
       - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana      
     depends_on:
       - prometheus
 
